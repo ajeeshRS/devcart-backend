@@ -71,23 +71,19 @@ const addProduct = asyncHandler(async (req, res) => {
         destination: image.destination,
       },
     });
-    //console.log("created product:", newProduct);
   }
 
   res.status(200).json({ admin: admin, message: "Data received successfully" });
 });
 
+// function to get all products
 const allProducts = asyncHandler(async (req, res) => {
   const admin = req.user;
 
   const products = await product.find();
-  // console.log(products);
 
   res.status(200).json({ admin: admin, products: products });
 });
-
-// home function (protected route)
-const adminHome = asyncHandler(async (req, res) => {});
 
 // update function  (protected route)
 const updateProduct = asyncHandler(async (req, res) => {
@@ -154,7 +150,6 @@ const deleteProduct = asyncHandler(async (req, res) => {
   const productPath = productExist.image.path;
   if (fs.existsSync(productPath)) {
     fs.unlinkSync(productPath);
-    //console.log("file successfully removed");
   } else {
     //console.log("file does not exist!");
   }
@@ -168,6 +163,7 @@ const deleteProduct = asyncHandler(async (req, res) => {
 
 const couponDiscount = asyncHandler(async (req, res) => {});
 
+// function to add coupon
 const addCoupon = asyncHandler(async (req, res) => {
   try {
     const { code, discountPercentage, expiry, minPurchaseAmount } =
@@ -196,6 +192,7 @@ const addCoupon = asyncHandler(async (req, res) => {
   }
 });
 
+// function to get orders
 const getOrders = asyncHandler(async (req, res) => {
   try {
     const data = await orders.find({});

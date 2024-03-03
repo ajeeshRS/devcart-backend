@@ -13,6 +13,8 @@ const {
   addCoupon,
   getOrders,
 } = require("../controllers/adminController");
+
+// auth middleware to check token
 const adminTokenValidator = require("../middlewares/adminTokenValidator");
 const path = require("path");
 
@@ -81,15 +83,16 @@ router.patch(
   updateProduct
 );
 
-// get admin
+// get admin route
 router.get("/auth-admin", adminTokenValidator, authAdmin);
 
-// delete product
+// delete product route
 router.delete("/delete-product/:productId", adminTokenValidator, deleteProduct);
 
+// discount coupon routes
 router.get("/coupon-discount", couponDiscount);
-
 router.post("/add-coupon", adminTokenValidator, addCoupon);
 
+// get orders route
 router.get("/get/orders", adminTokenValidator, getOrders);
 module.exports = router;

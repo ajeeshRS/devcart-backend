@@ -11,6 +11,7 @@ const Razorpay = require("razorpay");
 const crypto = require("crypto");
 const orders = require("../models/orderDetailsModel");
 const easyInvoice = require("easyinvoice");
+
 // register user
 const registerUser = asyncHandler(async (req, res) => {
   const { userFormData } = req.body;
@@ -29,7 +30,6 @@ const registerUser = asyncHandler(async (req, res) => {
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
-  // console.log(hashedPassword);
   await user
     .create({
       email,
@@ -37,7 +37,6 @@ const registerUser = asyncHandler(async (req, res) => {
       password: hashedPassword,
     })
     .then((response) => {
-      // console.log(response);
       res.status(200).send("Account created succesfully !");
     })
     .catch((err) => console.log(err));
@@ -66,28 +65,26 @@ const loginUser = asyncHandler(async (req, res) => {
       process.env.ACCESS_KEY,
       { expiresIn: "7d" }
     );
-    //console.log({ accessToken });
     res.status(200).json({ accessToken });
   }
-  // if(userExist){
-  //   console.log(userExist);
-  // }
+  
   else {
     res.status(401);
     throw new Error("email or password is not valid");
   }
 });
 
+// fetch all products from db
 const getAllProducts = asyncHandler(async (req, res) => {
   try {
     const data = await product.find();
     res.status(200).json(data);
   } catch (error) {
-    // console.log("could not fetch details");
     res.status(404).json("could not fetch details");
   }
 });
 
+// fetch single product from db
 const getProduct = asyncHandler(async (req, res) => {
   const id = req.params.id;
   try {
@@ -100,6 +97,7 @@ const getProduct = asyncHandler(async (req, res) => {
   }
 });
 
+// function to add product to wishlist
 const addToWishlist = asyncHandler(async (req, res) => {
   try {
     const userId = req.user.id;
@@ -115,11 +113,9 @@ const addToWishlist = asyncHandler(async (req, res) => {
 
     if (index !== -1) {
       wishlist.products.splice(index, 1);
-      // console.log("product removed success");
       res.status(200).json("product removed success");
     } else {
       wishlist.products.push(productId);
-      // console.log("product added successfully");
 
       res.status(200).json("product added successfully");
     }
@@ -130,6 +126,7 @@ const addToWishlist = asyncHandler(async (req, res) => {
   }
 });
 
+// function to delete product from wishlist
 const deleteFromWishlist = asyncHandler(async (req, res) => {
   try {
     const userId = req.user.id;
@@ -146,10 +143,8 @@ const deleteFromWishlist = asyncHandler(async (req, res) => {
     if (index !== -1) {
       wishlist.products.splice(index, 1);
       await wishlist.save();
-      // console.log("Product removed successfully");
       res.status(200).json("Product removed successfully");
     } else {
-      // console.log("Product not found in wishlist");
       res.status(404).json("Product not found in wishlist");
     }
   } catch (error) {
@@ -157,6 +152,7 @@ const deleteFromWishlist = asyncHandler(async (req, res) => {
   }
 });
 
+// fetch all favourites 
 const getAllFavorites = asyncHandler(async (req, res) => {
   try {
     const userId = req.user.id;
@@ -170,6 +166,7 @@ const getAllFavorites = asyncHandler(async (req, res) => {
   }
 });
 
+// fetch single product in favourites
 const getFavoriteProductDetails = asyncHandler(async (req, res) => {
   const userId = req.user.id;
 
@@ -191,6 +188,7 @@ const getFavoriteProductDetails = asyncHandler(async (req, res) => {
   }
 });
 
+// function to add product to cart
 const addToCart = asyncHandler(async (req, res) => {
   try {
     const userId = req.user.id;
@@ -208,7 +206,6 @@ const addToCart = asyncHandler(async (req, res) => {
       res.status(401).json("product already exists");
     } else {
       cart.products.push(productId);
-      // console.log("product added successfully");
       res.status(200).json("product added to cart successfully");
     }
 
@@ -218,6 +215,7 @@ const addToCart = asyncHandler(async (req, res) => {
   }
 });
 
+// fetch items in cart 
 const getCartProducts = asyncHandler(async (req, res) => {
   try {
     const userId = req.user.id;
@@ -241,6 +239,7 @@ const getCartProducts = asyncHandler(async (req, res) => {
   }
 });
 
+// function to delete a product from cart
 const deleteFromCart = asyncHandler(async (req, res) => {
   try {
     const userId = req.user.id;
@@ -271,6 +270,7 @@ const deleteFromCart = asyncHandler(async (req, res) => {
   }
 });
 
+// function to update product quantity
 const updateQuantity = asyncHandler(async (req, res) => {
   try {
     const productId = req.params.productId;
@@ -298,6 +298,7 @@ const updateQuantity = asyncHandler(async (req, res) => {
   }
 });
 
+// function to perform search
 const searchProducts = asyncHandler(async (req, res) => {
   try {
     const term = req.params.term;
@@ -307,7 +308,7 @@ const searchProducts = asyncHandler(async (req, res) => {
     console.log(error);
   }
 });
-
+// function to create new address
 const addAddress = asyncHandler(async (req, res) => {
   try {
     const { data } = req.body;
@@ -329,7 +330,7 @@ const addAddress = asyncHandler(async (req, res) => {
     console.log(error);
   }
 });
-
+// fetch all addresses
 const viewAddresses = asyncHandler(async (req, res) => {
   try {
     const userId = req.user.id;
@@ -340,6 +341,7 @@ const viewAddresses = asyncHandler(async (req, res) => {
   }
 });
 
+// function to update the address
 const updateAddress = asyncHandler(async (req, res) => {
   const { data } = req.body;
   const id = req.params.id;
@@ -378,6 +380,7 @@ const updateAddress = asyncHandler(async (req, res) => {
   }
 });
 
+// function to delete an address
 const deleteAddress = asyncHandler(async (req, res) => {
   try {
     const id = req.params.id;
@@ -390,19 +393,19 @@ const deleteAddress = asyncHandler(async (req, res) => {
   }
 });
 
+// function to fetch single address
 const getAddress = asyncHandler(async (req, res) => {
   try {
     const id = req.params.id;
     const data = await address.findById({ _id: id });
     if (data) {
-      // console.log(data);
       res.status(200).json(data);
     }
   } catch (error) {
     console.log(error);
   }
 });
-
+//function to check coupon code
 const checkCoupon = asyncHandler(async (req, res) => {
   try {
     const { couponValue, totalAmount } = req.body;
@@ -411,15 +414,17 @@ const checkCoupon = asyncHandler(async (req, res) => {
       used: false,
     });
 
-    console.log(couponDetail)
+    console.log(couponDetail);
     if (!couponDetail) {
       return res.status(404).json({
         valid: false,
         message: "Coupon not found or already been used.",
       });
     }
-    if (couponDetail.expiry && couponDetail.expiry <  Date.now()) {
-      return res.status(404).json({ valid: false, message: "Coupon has expired" });
+    if (couponDetail.expiry && couponDetail.expiry < Date.now()) {
+      return res
+        .status(404)
+        .json({ valid: false, message: "Coupon has expired" });
     }
     if (
       couponDetail.minPurchaseAmount &&
@@ -443,6 +448,7 @@ const checkCoupon = asyncHandler(async (req, res) => {
   }
 });
 
+// create payment (razorPay)
 const payment = asyncHandler(async (req, res) => {
   try {
     const instance = new Razorpay({
@@ -470,12 +476,12 @@ const payment = asyncHandler(async (req, res) => {
   }
 });
 
+// function to verify the payment(razorPay)
 const verifyPayment = asyncHandler(async (req, res) => {
   try {
     const { response } = req.body;
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature } =
       response;
-    // console.log(response)
     const sign = razorpay_order_id + "|" + razorpay_payment_id;
     const expectedSign = crypto
       .createHmac("sha256", process.env.KEY_SECRET)
@@ -493,6 +499,7 @@ const verifyPayment = asyncHandler(async (req, res) => {
   }
 });
 
+// function to place order
 const addOrder = asyncHandler(async (req, res) => {
   try {
     const { productDetails, amount, orderId, discount } = req.body.orderDetails;
@@ -533,6 +540,7 @@ const addOrder = asyncHandler(async (req, res) => {
   }
 });
 
+// fetch user info
 const getUserInfo = asyncHandler(async (req, res) => {
   try {
     const user = req.user;
@@ -547,6 +555,7 @@ const getUserInfo = asyncHandler(async (req, res) => {
   }
 });
 
+// fetch all orders
 const getOrders = asyncHandler(async (req, res) => {
   try {
     const userId = req.user.id;
@@ -563,6 +572,7 @@ const getOrders = asyncHandler(async (req, res) => {
   }
 });
 
+// fetch single order details
 const getOrder = asyncHandler(async (req, res) => {
   try {
     const orderId = req.params.id;
@@ -578,6 +588,7 @@ const getOrder = asyncHandler(async (req, res) => {
   }
 });
 
+// function to cancel the order
 const deleteOrder = asyncHandler(async (req, res) => {
   try {
     const orderId = req.params.id;
@@ -593,7 +604,7 @@ const deleteOrder = asyncHandler(async (req, res) => {
     res.status(500).json("Some internal error occured!");
   }
 });
-
+// function to update username
 const updateUserName = asyncHandler(async (req, res) => {
   try {
     const data = req.body.data;
@@ -614,6 +625,7 @@ const updateUserName = asyncHandler(async (req, res) => {
   }
 });
 
+// function to reset password
 const resetPassword = asyncHandler(async (req, res) => {
   try {
     const data = req.body.data;
@@ -624,7 +636,6 @@ const resetPassword = asyncHandler(async (req, res) => {
     if (data.newPassword) {
       const hashedPassword = await bcrypt.hash(data.newPassword, 10);
       updatedFields.password = hashedPassword;
-
     }
 
     if (
@@ -635,11 +646,11 @@ const resetPassword = asyncHandler(async (req, res) => {
         new: true,
       });
       if (result) {
-        res.status(200).json("password changed!")
+        res.status(200).json("password changed!");
       }
     } else {
       console.log("password doesnt match");
-      res.status(400).json("password doesnt match")
+      res.status(400).json("password doesnt match");
     }
   } catch (error) {
     console.log(error);
