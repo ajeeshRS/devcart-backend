@@ -38,7 +38,7 @@ router.post("/login", login);
 
 // admin home
 
-router.get("/admin-panel", adminTokenValidator, adminHome);
+// router.get("/admin-panel", adminTokenValidator, adminHome);
 
 // add product route
 router.post(

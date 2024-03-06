@@ -210,7 +210,6 @@ const getOrders = asyncHandler(async (req, res) => {
 module.exports = {
   authAdmin,
   login,
-  adminHome,
   addProduct,
   allProducts,
   updateProduct,
