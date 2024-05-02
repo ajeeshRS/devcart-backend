@@ -40,8 +40,8 @@ router.post("/signup", registerUser);
 router.post("/login", loginUser);
 
 // products routes
-router.get("/get-products", validateToken, getAllProducts);
-router.get("/get-product/:id", validateToken, getProduct);
+router.get("/get-products", getAllProducts);
+router.get("/get-product/:id", getProduct);
 
 // wishlist routes
 router.post("/wishlist/:productId", validateToken, addToWishlist);
